@@ -11,12 +11,19 @@ const api = axios.create({
   },
 });
 
+const isSuccess = (status: number) => status === 200 || status === 201;
+
 export const apiGet = async (endpoint: string, params?: any) => {
   try {
     const res = await api.get(endpoint, { params });
-    return { success: true, data: res.data };
+
+    return {
+      success: isSuccess(res.status),
+      data: res.data,
+      status: res.status,
+    };
   } catch (error) {
-    console.log("GET ERROR:", error);
+    console.log('GET ERROR:', error);
     return { success: false, error };
   }
 };
@@ -24,9 +31,15 @@ export const apiGet = async (endpoint: string, params?: any) => {
 export const apiPost = async (endpoint: string, body?: any) => {
   try {
     const res = await api.post(endpoint, body);
-    return { success: true, data: res.data };
+    console.log('POST Response:', res);
+
+    return {
+      success: isSuccess(res.status),
+      data: res.data,
+      status: res.status,
+    };
   } catch (error) {
-    console.log("POST ERROR:", error);
+    console.log('POST ERROR:', error);
     return { success: false, error };
   }
 };
@@ -34,9 +47,14 @@ export const apiPost = async (endpoint: string, body?: any) => {
 export const apiPut = async (endpoint: string, body?: any) => {
   try {
     const res = await api.put(endpoint, body);
-    return { success: true, data: res.data };
+
+    return {
+      success: isSuccess(res.status),
+      data: res.data,
+      status: res.status,
+    };
   } catch (error) {
-    console.log("PUT ERROR:", error);
+    console.log('PUT ERROR:', error);
     return { success: false, error };
   }
 };
@@ -44,9 +62,14 @@ export const apiPut = async (endpoint: string, body?: any) => {
 export const apiDelete = async (endpoint: string) => {
   try {
     const res = await api.delete(endpoint);
-    return { success: true, data: res.data };
+
+    return {
+      success: isSuccess(res.status),
+      data: res.data,
+      status: res.status,
+    };
   } catch (error) {
-    console.log("DELETE ERROR:", error);
+    console.log('DELETE ERROR:', error);
     return { success: false, error };
   }
 };

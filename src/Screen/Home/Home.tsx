@@ -74,8 +74,8 @@ const Home: React.FC<Props> = ({ navigation }) => {
         onCartClick={() => {
           navigation.navigate('CartScreen');
         }}
-        onLogoutPress={() => {
-          removeCredentials();
+        onLogoutPress={async () => {
+          await removeCredentials();
           dispatch(clearUser());
         }}
       />
