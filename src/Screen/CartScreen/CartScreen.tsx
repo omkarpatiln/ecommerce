@@ -11,6 +11,7 @@ import Header from '../../Components/Header';
 import { StackProps } from '../../Routes/routes';
 import axios from 'axios';
 import { RootState } from '../../redux/store';
+import { apiPost } from '../../services';
 
 type Props = StackProps<'CartScreen'>;
 
@@ -20,34 +21,32 @@ const CartScreen: React.FC<Props> = ({ navigation, route }) => {
 
   const dispatch = useDispatch();
   const updateCart = async (productId: number, quantity: number) => {
-    try {
-      const response = await axios.post('https://fakestoreapi.com/carts', {
-        userId: user?.id,
-        date: new Date(),
-        products: [{ productId, quantity }],
-      });
+    const userId = user?.id;
+    const body = {
+      userId,
+      date: new Date(),
+      products: [{ productId, quantity }],
+    };
 
-      return response.status === 200 || response.status === 201;
-    } catch (error) {
-      console.log('Update Cart API Error:', error);
-      return false;
-    }
+    const res = await apiPost('/carts', body);
+
+    return res.success; // true or false
   };
 
   const removeFromCart = async (productId: number) => {
-    try {
-      const response = await axios.post('https://fakestoreapi.com/carts', {
-        userId: user?.id,
-        date: new Date(),
-        products: [{ productId, quantity: 0 }],
-      });
+    const userId = user?.id;
 
-      return response.status === 200 || response.status === 201;
-    } catch (error) {
-      console.log('Remove Cart API Error:', error);
-      return false;
-    }
+    const body = {
+      userId,
+      date: new Date(),
+      products: [{ productId, quantity: 0 }],
+    };
+
+    const res = await apiPost('/carts', body);
+
+    return res.success;
   };
+
   return (
     <View style={{ flex: 1 }}>
       <Header
@@ -66,7 +65,9 @@ const CartScreen: React.FC<Props> = ({ navigation, route }) => {
                 const res = await removeFromCart(item.id);
                 if (res) {
                   dispatch(clearProductFromCart(item.id));
+                  return true;
                 }
+                return false;
               }}
               item={item}
               onAddCart={async count => {

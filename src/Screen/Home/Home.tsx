@@ -15,6 +15,7 @@ import Header from '../../Components/Header';
 import { RootState } from '../../redux/store';
 import { removeCredentials } from '../../utils/keychain';
 import { clearUser, setUserData } from '../../redux/userSlice';
+import { apiGet, apiPost } from '../../services';
 
 type Props = StackProps<'Home'>;
 
@@ -25,33 +26,30 @@ const Home: React.FC<Props> = ({ navigation }) => {
 
   const dispatch = useDispatch();
   const updateCart = async (productId: number, quantity: number) => {
-    try {
-      const response = await axios.post('https://fakestoreapi.com/carts', {
-        userId: user?.id,
-        date: new Date(),
-        products: [{ productId, quantity }],
-      });
+    const userId = user?.id;
+    const body = {
+      userId,
+      date: new Date(),
+      products: [{ productId, quantity }],
+    };
 
-      return response.status === 200 || response.status === 201;
-    } catch (error) {
-      console.log('Update Cart API Error:', error);
-      return false;
-    }
+    const res = await apiPost('/carts', body);
+
+    return res.success; // true or false
   };
 
   const removeFromCart = async (productId: number) => {
-    try {
-      const response = await axios.post('https://fakestoreapi.com/carts', {
-        userId: user?.id,
-        date: new Date(),
-        products: [{ productId, quantity: 0 }],
-      });
+    const userId = user?.id;
 
-      return response.status === 200 || response.status === 201;
-    } catch (error) {
-      console.log('Remove Cart API Error:', error);
-      return false;
-    }
+    const body = {
+      userId,
+      date: new Date(),
+      products: [{ productId, quantity: 0 }],
+    };
+
+    const res = await apiPost('/carts', body);
+
+    return res.success;
   };
 
   useEffect(() => {
@@ -59,13 +57,12 @@ const Home: React.FC<Props> = ({ navigation }) => {
   }, []);
 
   const fetchProducts = async () => {
-    try {
-      const response = await axios.get('https://fakestoreapi.com/products');
-      if (response && response.data) {
-        dispatch(setProducts(response.data));
-      }
-    } catch (error) {
-      console.error('API fetch error:', error);
+    const res = await apiGet('/products');
+
+    if (res.success && res.data) {
+      dispatch(setProducts(res.data));
+    } else {
+      console.log('API fetch error:', res.error);
     }
   };
 
