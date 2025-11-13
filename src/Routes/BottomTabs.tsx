@@ -1,22 +1,17 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer } from '@react-navigation/native';
 import Profile from '../Screen/Profile';
-import Routes from './routes';
 import React from 'react';
+import Home from '../Screen/Home/Home';
 
 const Tab = createBottomTabNavigator();
 
-const MyTabs=()=> {
+const MyTabs = () => {
   return (
-<NavigationContainer>
- <Tab.Navigator screenOptions={{headerShown:false,}}>
-          <Tab.Screen options={{}} name="Home" component={Routes} />
+    <Tab.Navigator screenOptions={{ headerShown: false }}>
+      <Tab.Screen options={{}} name="Home" component={Home} />
 
-            <Tab.Screen name="Profile" component={Profile} />
-
+      <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
-</NavigationContainer>    
-   
   );
-}
+};
 export default MyTabs;
